@@ -1,6 +1,6 @@
 {
-    "name": "sensio/generator-bundle",
-    "description": "This bundle generates code for you",
+    "name": "szo/generator-bundle-admin-lte",
+    "description": "This bundle generates code integrated with AdminLte",
     "keywords": [],
     "type": "symfony-bundle",
     "license": "MIT",
@@ -8,6 +8,10 @@
         {
             "name": "Fabien Potencier",
             "email": "fabien@symfony.com"
+        },
+        {
+            "name": "Szymon Osadowski",
+            "email": "szymon.osadowski@gmail.com"
         }
     ],
     "require": {
