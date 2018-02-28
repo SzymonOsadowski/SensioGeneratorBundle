@@ -26,6 +26,7 @@ class DoctrineFormGenerator extends Generator
     private $filesystem;
     private $className;
     private $classPath;
+    private $entityClass;
 
     /**
      * Constructor.
@@ -58,9 +59,9 @@ class DoctrineFormGenerator extends Generator
     public function generate(BundleInterface $bundle, $entity, ClassMetadataInfo $metadata, $forceOverwrite = false)
     {
         $parts = explode('\\', $entity);
-        $entityClass = array_pop($parts);
+        $this->entityClass = array_pop($parts);
 
-        $this->className = $entityClass.'Type';
+        $this->className = $this->entityClass.'Type';
         $dirPath = $bundle->getPath().'/Form';
         $this->classPath = $dirPath.'/'.str_replace('\\', '/', $entity).'Type.php';
 
@@ -76,15 +77,16 @@ class DoctrineFormGenerator extends Generator
         array_pop($parts);
 
         $this->renderFile('form/FormType.php.twig', $this->classPath, array(
-            'fields' => $this->getFieldsFromMetadata($metadata),
+            'fields' => $metadata->fieldMappings,
             'namespace' => $bundle->getNamespace(),
             'entity_namespace' => implode('\\', $parts),
-            'entity_class' => $entityClass,
+            'entity_class' => $this->entityClass,
             'bundle' => $bundle->getName(),
             'form_class' => $this->className,
             'form_type_name' => strtolower(str_replace('\\', '_', $bundle->getNamespace()).($parts ? '_' : '').implode('_', $parts).'_'.substr($this->className, 0, -4)),
             // BC with Symfony 2.7
             'get_name_required' => !method_exists('Symfony\Component\Form\AbstractType', 'getBlockPrefix'),
+            'entity_singularized' => $this->entityClass,
         ));
     }
 

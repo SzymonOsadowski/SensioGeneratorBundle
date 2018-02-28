@@ -3,15 +3,50 @@
 {% endblock extends %}
 
 {% block body %}
-{{ "{% block body %}" }}
-    <h1>{{ entity_singularized|capitalize }} creation</h1>
-
-    {{ '{{ form_start(form) }}' }}
-        {{ '{{ form_widget(form) }}' }}
-        <input type="submit" value="Create" />
-    {{ '{{ form_end(form) }}' }}
-
-{% set hide_edit, hide_delete = true, true %}
-{{ include('crud/views/others/record_actions.html.twig.twig') -}}
+{{ "{% block mainTitle %}" }}
+    {{ "{% trans %}" }}new.title.{{ entity_singularized }}{{ "{% endtrans %}" }}
 {{ "{% endblock %}" }}
+{{ "{% block body %}" }}
+<div class="row">
+    <div class="col-xs-12 col-lg-6 col-lg-offset-3">
+        {{ '{{ form_start(form) }}' }}
+        <div class="box box-default color-palette-box">
+            <div class="box-header with-border">
+                <h3 class="box-title"></h3>
+            </div>
+            <div class="box-body">
+                {{ '{{ form_widget(form) }}' }}
+            </div>
+            <div class="box-footer">
+                <input type="submit" value="{{ "{% trans %}" }}{{ entity_singularized }}.save{{ "{% endtrans %}" }}" class="btn btn-success" />
+                {% set hide_edit, hide_delete, hide_show = true, true, true %}
+                {{ include('crud/views/others/record_actions.html.twig.twig') -}}
+            </div>
+        </div>
+        {{ '{{ form_end(form) }}' }}
+    </div>
+</div>
+{{ "{% endblock %}" }}
+    {{ "{% block javascripts %}
+    {{ parent() }}
+
+    <script type=\"text/javascript\">
+	$('textarea').wysihtml5();
+
+	$('.datepicker').datetimepicker({
+        format: 'DD-MM-YYYY',
+        showTodayButton: true,
+        showClear: true,
+        toolbarPlacement: 'top'
+	});
+
+	$('.datetimepicker').datetimepicker({
+         format: 'DD-MM-YYYY HH:mm',
+         showTodayButton: true,
+         showClear: true,
+         toolbarPlacement: 'top'
+	});
+    </script>
+
+{% endblock %}" }}
 {% endblock body %}
