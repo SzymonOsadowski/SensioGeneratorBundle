@@ -1,5 +1,5 @@
 {% block extends %}
-{{ "{% extends 'base.html.twig' %}" }}
+{{ "{% extends 'base_admin_lte.html.twig' %}" }}
 {% endblock extends %}
 
 {% block body %}
@@ -28,25 +28,11 @@
 </div>
 
 {{ "{% endblock %}" }}
-    {{ "{% block javascripts %}
+{{ "{% block javascript %}
     {{ parent() }}
+    <script src=\"{{ asset('adminlte/js/run/run-datepicker.js') }}\"></script>
+    <script src=\"{{ asset('adminlte/js/run/run-datetimepicker.js') }}\"></script>
+    <script src=\"{{ asset('adminlte/js/run/run-wysihtml5.js') }}\"></script>
 
-    <script type=\"text/javascript\">
-	$('textarea').wysihtml5();
-
-    $('.datepicker').datetimepicker({
-        format: 'DD-MM-YYYY',
-        showTodayButton: true,
-        showClear: true,
-        toolbarPlacement: 'top'
-	});
-
-	$('.datetimepicker').datetimepicker({
-         format: 'DD-MM-YYYY HH:mm',
-         showTodayButton: true,
-         showClear: true,
-         toolbarPlacement: 'top'
-	});
-	</script>
 {% endblock %}" }}
 {% endblock body %}

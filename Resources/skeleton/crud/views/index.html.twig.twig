@@ -1,17 +1,10 @@
 {% block extends %}
-{{ "{% extends 'base.html.twig' %}" }}
+{{ "{% extends 'base_admin_lte.html.twig' %}" }}
 {% endblock extends %}
-{{ "{% block stylesheets %}
-    {{ parent() }}
-    {% stylesheets
-        'DataTable/css/*' filter='cssrewrite'
-    %}
-        <link rel=\"stylesheet\" href=\"{{ asset_url }}\" />
-    {% endstylesheets %}
-{% endblock %}" }}
+
 {% block body %}
 {{ "{% block mainTitle %}" }}
-    {{ "{% trans %}" }}index.title.{{ entity_singularized }} {{ "{% endtrans %}" }}
+    {{ "{% trans %}" }}index.title.{{ entity_singularized }}{{ "{% endtrans %}" }}
 {{ "{% endblock %}" }}
 {{ "{% block body %}" }}
 <div class="row">
@@ -21,7 +14,7 @@
             <h3 class="box-title"></h3>
         </div>
         <div class="box-body">
-            <table id="table-to-export-{{ entity_singularized }}" class="table table-bordered table-hover">
+            <table id="datatable" class="table table-bordered table-hover">
                 <thead>
                     <tr>
                     {%- for field, metadata in fields if field != 'isActive'%}
@@ -98,23 +91,8 @@
     </div>
 </div>
 {{ "{% endblock %}" }}
-    {{ "{% block javascripts %}
-    {{ parent() }}
-    {% javascripts '@datatable' %}
-        <script src=\"{{ asset_url }}\"></script>
-    {% endjavascripts %}
-
-    <script>
-    $(document).ready(function() {
-    $('#table-to-export-"}}{{ entity_singularized }}{{ "').DataTable( {
-        dom: 'Bfrtip',
-        buttons: [
-            'copy', 'csv', 'excel', 'pdf'
-        ]
-        } );
-    } );
-    </script>
-
-{% endblock %}" }}
-
+{{ "{% block javascript %}
+    {{ parent() }}"}}
+    {{ "<script src=\"{{ asset('adminlte/js/run/run-datatable.js') }}\"></script>" }}
+{{ "{% endblock %}" }}
 {% endblock body %}

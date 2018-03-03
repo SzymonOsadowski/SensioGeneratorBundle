@@ -15,6 +15,8 @@ use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 use Doctrine\ORM\Mapping\ClassMetadataInfo;
 use Doctrine\Common\Inflector\Inflector;
+use Symfony\Component\Finder\Finder;
+
 
 /**
  * Generates a CRUD controller.
@@ -85,7 +87,7 @@ class DoctrineCrudGenerator extends Generator
         if (!file_exists($dir)) {
             self::mkdir($dir);
         }
-
+        $this->copyAssetics();
         $this->generateIndexView($dir);
 
         if (in_array('show', $this->actions)) {
@@ -99,7 +101,9 @@ class DoctrineCrudGenerator extends Generator
         if (in_array('edit', $this->actions)) {
             $this->generateEditView($dir);
         }
-
+        $this->generateEntityMenu($dir);
+        $this->generateBaseAdminLte();
+        $this->generateMenu();
         $this->generateTestClass();
         $this->generateConfiguration();
     }
@@ -291,6 +295,73 @@ class DoctrineCrudGenerator extends Generator
             'actions' => $this->actions,
         ));
     }
+
+    /**
+     * Generate menu part for entity
+     * @param $dir
+     */
+    protected function generateEntityMenu()
+    {
+        $dir = sprintf('%s/Resources/views/menu/', $this->rootDir );
+        $this->renderFile('crud/views/others/entity_menu.html.twig.twig', $dir.$this->entitySingularized.'_menu.html.twig',array(
+            'route_prefix' => $this->routePrefix,
+            'route_name_prefix' => $this->routeNamePrefix,
+            'identifier' => $this->metadata->identifier[0],
+            'entity' => $this->entity,
+            'entity_singularized' => $this->entitySingularized,
+            'fields' => $this->metadata->fieldMappings,
+            'bundle' => $this->bundle->getName(),
+            'actions' => $this->actions,
+        ));
+        
+    }
+
+    protected function generateBaseAdminLte()
+    {
+        $dir = sprintf('%s/Resources/views/%s', $this->rootDir,'/base_admin_lte.html.twig'  );
+
+        $this->renderFile('crud/views/others/base_admin_lte.html.twig.twig', $dir ,array(
+            'route_prefix' => $this->routePrefix,
+            'route_name_prefix' => $this->routeNamePrefix,
+            'identifier' => $this->metadata->identifier[0],
+            'entity' => $this->entity,
+            'entity_singularized' => $this->entitySingularized,
+            'fields' => $this->metadata->fieldMappings,
+            'bundle' => $this->bundle->getName(),
+            'actions' => $this->actions,
+        ));
+    }
+
+    protected function generateMenu()
+    {
+        $dir = sprintf('%s/Resources/views/', $this->rootDir );
+        if(!$this->filesystem->exists($dir .'menu')){
+            $this->filesystem->mkdir($dir .'menu');
+        }
+        $finder = new Finder();
+        $finder->files()->in(sprintf('%s/Resources/views/menu', $this->rootDir  ));
+
+        $this->renderFile('crud/views/others/menu_admin_lte.html.twig.twig', $dir.'/menu_admin_lte.html.twig' ,array(
+            'route_prefix' => $this->routePrefix,
+            'route_name_prefix' => $this->routeNamePrefix,
+            'identifier' => $this->metadata->identifier[0],
+            'entity' => $this->entity,
+            'entity_singularized' => $this->entitySingularized,
+            'fields' => $this->metadata->fieldMappings,
+            'bundle' => $this->bundle->getName(),
+            'actions' => $this->actions,
+            'menus' => $finder
+        ));
+    }
+    protected function copyAssetics()
+    {
+        $webDir = substr($this->rootDir,0,-3);
+        $currentDir = dirname(__FILE__);
+        $sourceDir = substr($currentDir, 0,-9) . 'Resources/public';
+        $this->filesystem->mirror($sourceDir,$webDir . 'web/adminlte');
+    }
+
+
 
     /**
      * Returns an array of record actions to generate (edit, show).
